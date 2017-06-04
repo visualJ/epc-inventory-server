@@ -1,7 +1,7 @@
 # Create your views here.
 import hashlib
-from random import random
 
+import math
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,13 +24,14 @@ class UpdateProductsView(APIView):
                 location = product["location"]
                 filtered_products = Product.objects.filter(domainManager=domainManager, serialNumber=serialNumber, objectClass=objectClass)
                 if not filtered_products:
-                    new_id = hashlib.sha1("".join(map(str[domainManager, objectClass, serialNumber])))
-                    new_product = Product(id=new_id, header=header,domainManager=domainManager, serialNumber=serialNumber, objectClass=objectClass, location=location )
+                    new_id = int(hashlib.sha1("".join(map(str, [domainManager, objectClass, serialNumber])).encode()).hexdigest(), 16)
+                    short_id = int(new_id/math.pow(10, 32))
+                    new_product = Product(id=short_id, header=header, domainManager=domainManager, serialNumber=serialNumber, objectClass=objectClass, location=location )
                     new_product.save()
                 print(filtered_products)
         for product in Product.objects.all():
             for req_product in request.data["products"]:
-                if product.domainManager == req_product["domainManager"] and  product.objectClass == req_product["objectClass"] and product.serialNumber == req_product["serialNumber"]:
+                if product.domainManager == req_product["domainManager"] and product.objectClass == req_product["objectClass"] and product.serialNumber == req_product["serialNumber"]:
                     break
             else:
                 product.delete()

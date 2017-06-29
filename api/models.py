@@ -21,20 +21,20 @@ class RfidTagSerializer(serializers.HyperlinkedModelSerializer):
 
 class Product(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=200)
     header = models.SmallIntegerField(default=0)
     domainManager = models.IntegerField(default=0)
     objectClass = models.IntegerField(default=0)
     serialNumber = models.BigIntegerField(default=0)
 
+    currentAmount = models.IntegerField(default=0)
     location = models.IntegerField(default=0)
     position = models.IntegerField(default=0)
 
     def __str__(self):
-        return ",".join(map(str, [self.id, self.name, self.header, self.domainManager, self.objectClass, self.serialNumber, self.location, self.position]))
+        return ",".join(map(str, [self.id, self.header, self.domainManager, self.objectClass, self.serialNumber, self.currentAmount,self.location, self.position]))
 
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Product
-        fields = ('id', 'name', 'header', 'domainManager', 'objectClass', 'serialNumber', 'location', 'position')
+        fields = ('id', 'header', 'domainManager', 'objectClass', 'serialNumber', 'currentAmount','location', 'position')

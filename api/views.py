@@ -15,6 +15,9 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 class UpdateProductsView(APIView):
     def post(self, request):
+        for product in Product.objects.all():
+            product.delete()
+
         for product in request.data["products"]:
             if "header" in product and "domainManager" in product and "objectClass" in product and "serialNumber" in product and "location" in product and "currentAmount" in product:
                 header = product["header"]
@@ -32,12 +35,6 @@ class UpdateProductsView(APIView):
                     new_product = Product(id=short_id, header=header, domainManager=domainManager, serialNumber=serialNumber, objectClass=objectClass, location=location, currentAmount=currentAmount)
                     new_product.save()
                 print(filtered_products)
-        for product in Product.objects.all():
-            for req_product in request.data["products"]:
-                if product.domainManager == req_product["domainManager"] and product.objectClass == req_product["objectClass"] and product.serialNumber == req_product["serialNumber"]:
-                    break
-            else:
-                product.delete()
 
         response_dict = {"Success": True}
         return Response(response_dict)
